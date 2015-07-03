@@ -1,0 +1,41 @@
+.MarkerFadeIn {
+	animation-name: MarkerFadeInAnim;
+	animation-duration: 0.2s;
+	animation-timing-function: ease-in;
+	animation-iteration-count: 1;
+}
+
+@keyframes 'MarkerFadeInAnim'
+{
+	0%
+	{
+		opacity: 0;
+	}
+
+	
+	100%
+	{
+		opacity: 1;
+	}
+}
+
+.MarkerFadeOut {
+	animation-name: MarkerFadeOutAnim;
+	animation-duration: 1s;
+	animation-timing-function: ease-out;
+	animation-iteration-count: 1;
+}
+
+@keyframes 'MarkerFadeOutAnim'
+{
+	0%
+	{
+		opacity: 1;
+	}
+
+	
+	100%
+	{
+		opacity: 0;
+	}
+}
