@@ -7,7 +7,7 @@
  */
 
 //Constant parameters
-var MARKER_DURATION = 1000;
+var MARKER_DURATION = 5;
 var MARKER_UPDATE_INTERVAL = 0.05;
 var MARKER_OFFSET = new Vector( -100, -200 );
 var MARKER_SCREEN_SIZE = new Vector( 1760, 550 );
@@ -58,12 +58,12 @@ Markers.Remove = function( marker ) {
 	}
 }
 
-/* IsOnScreen
+/* IsOffScreen
  * Do some math to figure out if our marker is still within the screen bounds.
  * Params:
  * 		screenpos {Vector} - The position to check.
  */
-Markers.IsOnScreen = function( screenPos ) {
+Markers.IsOffScreen = function( screenPos ) {
 	return screenPos.x < MARKER_SCREEN_OFFSET.x || screenPos.y < MARKER_SCREEN_OFFSET.y
 			|| screenPos.x > ( MARKER_SCREEN_OFFSET.x + MARKER_SCREEN_SIZE.x ) 
 			|| screenPos.y > ( MARKER_SCREEN_OFFSET.y + MARKER_SCREEN_SIZE.y );
@@ -125,7 +125,7 @@ Marker.prototype.Update = function() {
 		).scale( 1/MARKER_SCREEN_SCALE ).add( MARKER_OFFSET );
 
 		//Check if the marker is on screen or not
-		if ( Markers.IsOnScreen( entityScreenPos ) ) {
+		if ( Markers.IsOffScreen( entityScreenPos ) ) {
 			//Point to the trap off-screen
 			this.PointOffScreen( entityScreenPos );
 		} else {
@@ -171,7 +171,7 @@ Marker.prototype.PointOffScreen = function( target ) {
 	angle = angle * ( 180/Math.PI );
 
 	//Figure out where to draw
-	var length = MARKER_SCREEN_SIZE.x / 2.1;
+	var length = Math.min( MARKER_SCREEN_SIZE.x / 2.1, target.minus( MARKER_SCREEN_CENTER ).length() - 200 );
 	var relativeMarkerPos = new Vector( direction.x * length, -direction.y * length );
 
 	//Get absolute position
@@ -203,9 +203,11 @@ Marker.prototype.PointOffScreen = function( target ) {
 Marker.prototype.Remove = function() {
 	//Start fading out
 	this.panel.AddClass('MarkerFadeOut');
+	this.icon.AddClass('MarkerFadeOut');
 
 	//Prevent the panel from flashing at the end
 	this.panel.style.opacity = '0';
+	this.icon.style.opacity = '0';
 
 	//Schedule the actual removal
 	$.Schedule( 1, (function() {
@@ -213,5 +215,6 @@ Marker.prototype.Remove = function() {
 
 		this.exists = false;
 		this.panel.DeleteAsync( 0 );
+		this.icon.DeleteAsync( 0 );
 	}).bind( this ) ); 
 }
